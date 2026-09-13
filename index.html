@@ -46,6 +46,8 @@
             </div>
         </header>
 
+        <div class="front-gallery" id="front-gallery" aria-label="Menu image gallery"></div>
+
         <main class="menu-content">
             <section class="menu-section" id="pizza">
                 <div class="section-title-wrap">
@@ -330,10 +332,26 @@
                 </div>
 
                 <div class="mini-gallery">
-                    <div class="photo-card pizza-photo"></div>
-                    <div class="photo-card burger-photo"></div>
-                    <div class="photo-card momos-photo"></div>
-                    <div class="photo-card vadapav-photo"></div>
+                    <div class="photo-card pizza-photo" data-target="pizza" tabindex="0" role="button"
+                        aria-label="Show Pizzas section"></div>
+                    <div class="photo-card burger-photo" data-target="burger" tabindex="0" role="button"
+                        aria-label="Show Burgers section"></div>
+                    <div class="photo-card momos-photo" data-target="momos" tabindex="0" role="button"
+                        aria-label="Show Momos section"></div>
+                    <div class="photo-card vadapav-photo" data-target="vadapav" tabindex="0" role="button"
+                        aria-label="Show Vadapav section"></div>
+                    <div class="photo-card tacos-photo" data-target="tacos" tabindex="0" role="button"
+                        aria-label="Show Tacos section"></div>
+                    <div class="photo-card pasta-photo" data-target="pasta" tabindex="0" role="button"
+                        aria-label="Show Pastas section"></div>
+                    <div class="photo-card garlic-bread-photo" data-target="garlic-bread" tabindex="0" role="button"
+                        aria-label="Show Garlic Bread section"></div>
+                    <div class="photo-card hot-beverage-photo" data-target="hot-beverage" tabindex="0" role="button"
+                        aria-label="Show Hot Beverages section"></div>
+                    <div class="photo-card desserts-photo" data-target="desserts" tabindex="0" role="button"
+                        aria-label="Show Desserts section"></div>
+                    <div class="photo-card jain-photo" data-target="jain-special" tabindex="0" role="button"
+                        aria-label="Show Jain Specials section"></div>
                 </div>
             </section>
 
@@ -724,10 +742,16 @@
                 </div>
 
                 <div class="mini-gallery combo-gallery">
-                    <div class="photo-card fries-photo"></div>
-                    <div class="photo-card sandwich-photo"></div>
-                    <div class="photo-card shake-photo"></div>
-                    <div class="photo-card maggie-photo"></div>
+                    <div class="photo-card fries-photo" data-target="fries" tabindex="0" role="button"
+                        aria-label="Show Fries section"></div>
+                    <div class="photo-card sandwich-photo" data-target="sandwich" tabindex="0" role="button"
+                        aria-label="Show Sandwiches section"></div>
+                    <div class="photo-card shake-photo" data-target="shakes" tabindex="0" role="button"
+                        aria-label="Show Shakes section"></div>
+                    <div class="photo-card maggie-photo" data-target="maggie" tabindex="0" role="button"
+                        aria-label="Show Maggie section"></div>
+                    <div class="photo-card combos-photo" data-target="combo" tabindex="0" role="button"
+                        aria-label="Show Combos section"></div>
                 </div>
             </section>
         </main>
@@ -851,10 +875,41 @@
         };
 
         const textTargets = document.querySelectorAll('.item-name, .item-desc, .cell-name, .cell-price, .price-stack span, .section-title-wrap h2, .combo-list h3, .category-nav span, .offer-banner, .bottom-bar');
+        const galleryCards = document.querySelectorAll('.photo-card[data-target]');
+        const galleryCardLabels = {
+            pizza: 'Pizzas',
+            burger: 'Burgers',
+            momos: 'Momos',
+            vadapav: 'Vadapavs',
+            tacos: 'Tacos',
+            pasta: 'Pastas',
+            'garlic-bread': 'Garlic Bread',
+            'hot-beverage': 'Hot Beverages',
+            desserts: 'Desserts',
+            'jain-special': 'Jain Specials',
+            fries: 'Fries',
+            sandwich: 'Sandwiches',
+            shakes: 'Shakes',
+            maggie: 'Maggie',
+            combo: 'Combos'
+        };
 
         textTargets.forEach((element) => {
             if (!element.dataset.original) {
                 element.dataset.original = element.textContent.trim();
+            }
+        });
+
+        galleryCards.forEach((card) => {
+            const label = galleryCardLabels[card.dataset.target] || card.dataset.target;
+            card.dataset.originalLabel = label;
+            card.dataset.label = label;
+
+            if (!card.querySelector('.photo-card-label')) {
+                const labelElement = document.createElement('span');
+                labelElement.className = 'photo-card-label';
+                labelElement.textContent = label;
+                card.appendChild(labelElement);
             }
         });
 
@@ -865,6 +920,17 @@
                 const originalText = element.dataset.original;
                 const translatedText = language === 'mr' ? (translations[originalText] || originalText) : originalText;
                 element.textContent = translatedText;
+            });
+
+            galleryCards.forEach((card) => {
+                const originalText = card.dataset.originalLabel || card.dataset.label;
+                const translatedText = language === 'mr' ? (translations[originalText] || originalText) : originalText;
+                card.dataset.label = translatedText;
+
+                const labelElement = card.querySelector('.photo-card-label');
+                if (labelElement) {
+                    labelElement.textContent = translatedText;
+                }
             });
 
             langButtons.forEach((button) => {
@@ -880,29 +946,82 @@
 
         setLanguage('en');
 
-        const revealSections = document.querySelectorAll('.menu-section');
+        const frontGallery = document.getElementById('front-gallery');
+        const menuSections = document.querySelectorAll('.menu-section');
 
-        const revealObserver = new IntersectionObserver((entries) => {
-            entries.forEach((entry) => {
-                if (entry.isIntersecting) {
-                    entry.target.classList.add('is-visible');
-
-                    const items = entry.target.querySelectorAll('.menu-item');
-                    items.forEach((item, index) => {
-                        item.style.setProperty('--item-delay', `${index * 90}ms`);
-                        item.classList.add('is-visible');
-                    });
-
-                    revealObserver.unobserve(entry.target);
-                }
-            });
-        }, {
-            threshold: 0.15,
-            rootMargin: '0px 0px -20px 0px'
+        galleryCards.forEach((card) => {
+            frontGallery.appendChild(card);
         });
 
-        revealSections.forEach((section) => revealObserver.observe(section));
-        
+        menuSections.forEach((section) => {
+            section.classList.add('is-hidden');
+            section.classList.remove('is-visible');
+        });
+
+        function moveSectionBelowImage(targetId, sourceCard) {
+            const targetSection = document.getElementById(targetId);
+            const frontGallery = document.getElementById('front-gallery');
+
+            if (!targetSection || !sourceCard || !frontGallery) {
+                return;
+            }
+
+            const existingVisibleSection = frontGallery.querySelector('.menu-section.is-visible');
+            if (existingVisibleSection && existingVisibleSection !== targetSection) {
+                existingVisibleSection.classList.remove('is-visible');
+                existingVisibleSection.classList.add('is-hidden');
+                existingVisibleSection.remove();
+            }
+
+            targetSection.classList.remove('is-hidden');
+            targetSection.classList.add('is-visible');
+
+            if (targetSection.parentElement !== frontGallery) {
+                frontGallery.appendChild(targetSection);
+            }
+
+            if (sourceCard.nextElementSibling !== targetSection) {
+                sourceCard.insertAdjacentElement('afterend', targetSection);
+            }
+        }
+
+        function showSection(targetId, sourceCard = null) {
+            menuSections.forEach((section) => {
+                const shouldShow = section.id === targetId;
+                section.classList.toggle('is-hidden', !shouldShow);
+                section.classList.toggle('is-visible', shouldShow);
+
+                const items = section.querySelectorAll('.menu-item');
+                items.forEach((item) => {
+                    item.classList.toggle('is-visible', shouldShow);
+                });
+            });
+
+            galleryCards.forEach((card) => {
+                card.classList.toggle('is-active', card.dataset.target === targetId);
+            });
+
+            const activeCard = sourceCard || document.querySelector(`.photo-card[data-target="${targetId}"]`);
+            moveSectionBelowImage(targetId, activeCard);
+
+            const targetSection = document.getElementById(targetId);
+            if (targetSection) {
+                activeCard?.blur?.();
+                requestAnimationFrame(() => {
+                    targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+                });
+            }
+        }
+
+        galleryCards.forEach((card) => {
+            card.addEventListener('click', () => showSection(card.dataset.target, card));
+            card.addEventListener('keydown', (event) => {
+                if (event.key === 'Enter' || event.key === ' ') {
+                    event.preventDefault();
+                    showSection(card.dataset.target, card);
+                }
+            });
+        });
     </script>
 </body>
 

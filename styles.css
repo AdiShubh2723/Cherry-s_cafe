@@ -309,21 +309,31 @@ img {
     position: relative;
     overflow: hidden;
     opacity: 0;
-    transform: translateY(48px) scale(0.975);
+    transform: translateY(8px);
     background: rgba(255, 255, 255, 0.68);
     border: 1px solid var(--glass-line);
     border-radius: 28px;
     padding: 24px 22px 20px;
     box-shadow: 0 18px 32px rgba(80, 40, 32, 0.06);
     margin-bottom: 22px;
-    backdrop-filter: blur(14px);
-    -webkit-backdrop-filter: blur(14px);
-    transition: opacity 0.9s ease, transform 0.9s cubic-bezier(0.2, 0.9, 0.2, 1), box-shadow 0.25s ease;
+    transition: opacity 0.16s ease, transform 0.16s ease;
 }
 
 .menu-section.is-visible {
     opacity: 1;
-    transform: translateY(0) scale(1);
+    transform: translateY(0);
+}
+
+.menu-section.is-hidden {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    max-height: 0;
+    margin-bottom: 0;
+    padding-top: 0;
+    padding-bottom: 0;
+    border-width: 0;
+    transform: translateY(6px);
 }
 
 .menu-section::before {
@@ -375,9 +385,8 @@ img {
     padding: 16px 18px;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
     opacity: 0;
-    transform: translateY(18px);
-    transition: transform 0.28s ease, box-shadow 0.25s ease, border-color 0.25s ease, background 0.25s ease, opacity 0.45s ease;
-    transition-delay: var(--item-delay, 0ms);
+    transform: translateY(6px);
+    transition: transform 0.18s ease, box-shadow 0.2s ease, border-color 0.2s ease, background 0.2s ease, opacity 0.18s ease;
 }
 
 .menu-item.is-visible {
@@ -543,103 +552,119 @@ img {
     color: var(--red-deep);
 }
 
+.front-gallery {
+    display: grid;
+    gap: 18px;
+    padding: 24px 28px 0;
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.16), rgba(255, 255, 255, 0));
+}
+
+.front-gallery .mini-gallery {
+    margin-top: 0;
+    grid-template-columns: 1fr;
+}
+
 .mini-gallery {
     margin-top: 24px;
     display: grid;
-    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-columns: 1fr;
     gap: 18px;
 }
 
 .photo-card {
+    position: relative;
     min-height: 180px;
     border-radius: 22px;
     border: 1px solid rgba(255, 255, 255, 0.5);
     background-size: cover;
     background-position: center;
     box-shadow: 0 18px 28px rgba(55, 24, 18, 0.08);
-    transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease;
+    cursor: pointer;
+    overflow: hidden;
+    transition: transform 0.28s ease, box-shadow 0.28s ease, filter 0.28s ease, border-color 0.28s ease;
 }
 
-.photo-card:hover {
+.photo-card-label {
+    position: absolute;
+    inset: auto 0 14px 0;
+    display: block;
+    text-align: center;
+    font-family: "Segoe Script", "Bradley Hand", "Comic Sans MS", cursive;
+    font-size: clamp(1.3rem, 2vw, 2rem);
+    font-weight: 900;
+    letter-spacing: 0.03em;
+    color: #ffffff;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+    z-index: 1;
+}
+
+.photo-card:hover,
+.photo-card:focus-visible,
+.photo-card.is-active {
     transform: translateY(-6px) scale(1.02);
     box-shadow: 0 24px 30px rgba(55, 24, 18, 0.14);
     filter: saturate(1.08);
+    border-color: rgba(229, 57, 53, 0.45);
 }
 
 .pizza-photo {
     background:
         linear-gradient(rgba(64, 42, 18, 0.18), rgba(64, 42, 18, 0.18)),
-        url("Pizza.png") center/cover no-repeat;
-}
-
-.pizza-photo::before {
-    content: "Pizzas";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("pizza.jpg") center/cover no-repeat;
 }
 
 .burger-photo {
     background:
         linear-gradient(rgba(52, 18, 9, 0.12), rgba(52, 18, 9, 0.12)),
-        url("Burger.png") center/cover no-repeat;
-}
-
-.burger-photo::before {
-    content: "Burgers";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("Burger.jpg") center/cover no-repeat;
 }
 
 .momos-photo {
     background:
         linear-gradient(rgba(90, 36, 20, 0.1), rgba(90, 36, 20, 0.1)),
-        url("momos.png") center/cover no-repeat;
-}
-
-.momos-photo::before {
-    content: "Momos";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("momos.jpg") center/cover no-repeat;
 }
 
 .vadapav-photo {
     background:
         linear-gradient(rgba(93, 47, 18, 0.1), rgba(93, 47, 18, 0.1)),
-        url("Vadapav.png") center/cover no-repeat;
+        url("Vadapav.jpg") center/cover no-repeat;
 }
 
-.vadapav-photo::before {
-    content: "Vadapavs";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+.tacos-photo {
+    background:
+        linear-gradient(rgba(89, 43, 17, 0.12), rgba(89, 43, 17, 0.12)),
+        url("tacos.jpg") center/cover no-repeat;
+}
+
+.pasta-photo {
+    background:
+        linear-gradient(rgba(54, 39, 14, 0.12), rgba(54, 39, 14, 0.12)),
+        url("pastas.jpg") center/cover no-repeat;
+}
+
+.garlic-bread-photo {
+    background:
+        linear-gradient(rgba(82, 50, 17, 0.12), rgba(82, 50, 17, 0.12)),
+        url("GarlicBread.jpg") center/cover no-repeat;
+}
+
+.hot-beverage-photo {
+    background:
+        linear-gradient(rgba(42, 39, 63, 0.12), rgba(42, 39, 63, 0.12)),
+        url("HotBeverages.png") center/cover no-repeat;
+}
+
+.desserts-photo {
+    background:
+        linear-gradient(rgba(55, 25, 21, 0.12), rgba(55, 25, 21, 0.12)),
+        url("Desserts.png") center/cover no-repeat;
+}
+
+.jain-photo {
+    background:
+        linear-gradient(rgba(89, 32, 20, 0.12), rgba(89, 32, 20, 0.12)),
+        url("CherrysJainMenu.png") center/cover no-repeat;
 }
 
 .combo-section {
@@ -711,77 +736,31 @@ img {
 .fries-photo {
     background:
         linear-gradient(rgba(74, 41, 12, 0.08), rgba(74, 41, 12, 0.08)),
-        url("Fries.png") center/cover no-repeat;
-}
-
-.fries-photo::before {
-    content: "Fries";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("fries.jpg") center/cover no-repeat;
 }
 
 .sandwich-photo {
     background:
         linear-gradient(rgba(62, 35, 16, 0.08), rgba(62, 35, 16, 0.08)),
-        url("Sandwhiches.png") center/cover no-repeat;
-}
-
-.sandwich-photo::before {
-    content: "Sandwiches";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("Sandwhiches.jpg") center/cover no-repeat;
 }
 
 .shake-photo {
     background:
         linear-gradient(rgba(18, 36, 60, 0.12), rgba(18, 36, 60, 0.12)),
-        url("Shakes.png") center/cover no-repeat;
-}
-
-.shake-photo::before {
-    content: "Shakes";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+        url("Shakes.jpg") center/cover no-repeat;
 }
 
 .maggie-photo {
     background:
         linear-gradient(rgba(94, 49, 16, 0.08), rgba(94, 49, 16, 0.08)),
-        url("Maggie.png") center/cover no-repeat;
+        url("maggie.jpg") center/cover no-repeat;
 }
 
-.maggie-photo::before {
-    content: "Maggie";
-    display: grid;
-    place-items: end center;
-    width: 100%;
-    height: 100%;
-    font-size: 1.6rem;
-    font-weight: 800;
-    color: rgba(255, 255, 255, 0.88);
-    text-shadow: 0 4px 18px rgba(0, 0, 0, 0.24);
-    padding-bottom: 16px;
+.combos-photo {
+    background:
+        linear-gradient(rgba(93, 43, 17, 0.12), rgba(93, 43, 17, 0.12)),
+        url("Combos.png") center/cover no-repeat;
 }
 
 .bottom-bar {
