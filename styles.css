@@ -736,7 +736,7 @@ img {
 .fries-photo {
     background:
         linear-gradient(rgba(74, 41, 12, 0.08), rgba(74, 41, 12, 0.08)),
-        url("fries.jpg") center/cover no-repeat;
+        url("Fries.jpg") center/cover no-repeat;
 }
 
 .sandwich-photo {
@@ -754,7 +754,7 @@ img {
 .maggie-photo {
     background:
         linear-gradient(rgba(94, 49, 16, 0.08), rgba(94, 49, 16, 0.08)),
-        url("maggie.jpg") center/cover no-repeat;
+        url("Maggie.jpg") center/cover no-repeat;
 }
 
 .combos-photo {
