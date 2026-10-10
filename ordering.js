@@ -1,6 +1,6 @@
 (() => {
-    const cafeUpiId = '7719006666@axisb';
-    const cafeWhatsappNumber = '917719006666';
+    const cafeUpiId = '7719006666-10@ybl';
+    const cafeWhatsappNumber = '+917719006666';
     const cartStorageKey = 'cherrys-cafe-cart-v1';
     const cart = new Map();
 
