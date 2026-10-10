@@ -1,6 +1,6 @@
 (() => {
     const cafeUpiId = '7719006666-10@ybl';
-    const cafeWhatsappNumber = '+917719006666';
+    const cafeWhatsappNumber = '917719006666';
     const cartStorageKey = 'cherrys-cafe-cart-v1';
     const cart = new Map();
 
@@ -79,7 +79,9 @@
             cu: 'INR',
             tn: `Order ${orderReference}`
         });
-        payLink.href = `upi://pay?${params.toString()}`;
+        const encodedUpiId = encodeURIComponent(cafeUpiId).replace('%40', '@');
+        const query = params.toString().replace(`pa=${encodeURIComponent(cafeUpiId)}`, `pa=${encodedUpiId}`);
+        payLink.href = `upi://pay?${query}`;
     }
 
     function saveCart() {
