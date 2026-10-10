@@ -1,5 +1,5 @@
 (() => {
-    const cafeUpiId = '7719006666-3@ybl';
+    const cafeUpiId = '771900666-3@ybl';
     const cafeWhatsappNumber = '917719006666';
     const cartStorageKey = 'cherrys-cafe-cart-v1';
     const cart = new Map();
@@ -35,8 +35,9 @@
             <a class="upi-pay-button" href="#">Pay ₹0.00 with UPI</a>
         </form>
         <p class="upi-id-note">Payee UPI ID: <strong class="upi-id-value"></strong></p>
-        <p class="payment-note">UPI payment is not verified by this website. After paying, return here, tap “Notify cafe”, then send the prepared WhatsApp message. The cafe should verify the payment in its UPI app.</p>
-        <button class="whatsapp-notify-button" type="button" hidden>Notify cafe on WhatsApp</button>
+        <p class="payment-note">This site cannot verify UPI payments automatically. After paying, confirm below; the cafe should verify the credit in its UPI app.</p>
+        <label class="payment-confirmation" hidden><input class="payment-confirmation-checkbox" type="checkbox"> I completed the UPI payment</label>
+        <button class="whatsapp-notify-button" type="button" disabled hidden>Notify cafe on WhatsApp</button>
         <p class="whatsapp-note" hidden>WhatsApp will open with your order details. Tap Send there to deliver the message.</p>
         <button class="cart-clear" type="button">Clear cart</button>
     `;
@@ -49,9 +50,12 @@
     const payLink = dialog.querySelector('.upi-pay-button');
     dialog.querySelector('.upi-id-value').textContent = cafeUpiId;
     const checkoutForm = dialog.querySelector('.checkout-form');
+    const paymentConfirmation = dialog.querySelector('.payment-confirmation');
+    const paymentConfirmationCheckbox = dialog.querySelector('.payment-confirmation-checkbox');
     const notifyButton = dialog.querySelector('.whatsapp-notify-button');
     const whatsappNote = dialog.querySelector('.whatsapp-note');
     let orderReference = '';
+    let paymentAttemptTotal = null;
 
     function money(amount) {
         return `₹${amount.toFixed(2)}`;
@@ -82,12 +86,22 @@
         sessionStorage.setItem(cartStorageKey, JSON.stringify([...cart.values()]));
     }
 
+    function resetPaymentConfirmation() {
+        paymentAttemptTotal = null;
+        paymentConfirmationCheckbox.checked = false;
+        paymentConfirmation.hidden = true;
+        notifyButton.disabled = true;
+        notifyButton.hidden = true;
+        whatsappNote.hidden = true;
+    }
+
     function addToCart(name, variant, price) {
         const key = `${name}|${variant}|${price}`;
         const item = cart.get(key) || { key, name, variant, price, quantity: 0 };
         item.quantity += 1;
         cart.set(key, item);
         saveCart();
+        resetPaymentConfirmation();
         renderCart();
     }
 
@@ -231,6 +245,7 @@
         item.quantity += change;
         if (item.quantity <= 0) cart.delete(key);
         saveCart();
+        resetPaymentConfirmation();
         renderCart();
     }
 
@@ -249,13 +264,17 @@
         if (!checkoutForm.reportValidity()) return;
 
         updatePaymentLink();
+        paymentAttemptTotal = cartTotal();
+        paymentConfirmationCheckbox.checked = false;
+        paymentConfirmation.hidden = false;
         notifyButton.hidden = false;
-        whatsappNote.hidden = false;
+        notifyButton.disabled = true;
+        whatsappNote.hidden = true;
         window.location.href = payLink.href;
     }
 
     function notifyCafe() {
-        if (!cart.size || !checkoutForm.reportValidity()) return;
+        if (!cart.size || paymentAttemptTotal !== cartTotal() || !paymentConfirmationCheckbox.checked || !checkoutForm.reportValidity()) return;
         const customer = customerDetails();
         const lines = [...cart.values()].map((item) => {
             const label = [item.name, item.variant].filter(Boolean).join(' - ');
@@ -281,12 +300,16 @@
     dialog.querySelector('.cart-clear').addEventListener('click', () => {
         cart.clear();
         orderReference = '';
-        notifyButton.hidden = true;
-        whatsappNote.hidden = true;
+        resetPaymentConfirmation();
         saveCart();
         renderCart();
     });
     payLink.addEventListener('click', startPayment);
+    paymentConfirmationCheckbox.addEventListener('change', () => {
+        const confirmed = paymentAttemptTotal === cartTotal() && paymentConfirmationCheckbox.checked;
+        notifyButton.disabled = !confirmed;
+        whatsappNote.hidden = !confirmed;
+    });
     notifyButton.addEventListener('click', notifyCafe);
 
     installMenuItemControls();
